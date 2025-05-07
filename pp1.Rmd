@@ -1,0 +1,245 @@
+---
+title: "pp1"
+author: "Hoe Young"
+date: "2025-05-04"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r}
+# 1a）
+# 创建一个步长为0.05，由1到3的向量
+z <- seq(1.0, 3.0, by = 0.05)
+
+# 标准正态分布的概率（Pr |Z} < z = Pr (-z < Z < z))
+prob_z <- c(pnorm(z) - pnorm(-z))
+
+snd <- data.frame(z = z, Prob = prob_z)
+head(snd)
+tail(snd)
+```
+
+```{r}
+# 1b)
+# 样本数据
+reaction_time <- c(11.1, 13.2, 9.9, 12.1, 10.9, 12.2, 14.3, 10.8, 11.7)
+
+# 由总体标准差计算标准误差
+standard_sd <- 5
+standard_error <- standard_sd / sqrt(length(reaction_time))
+
+# 置信区间计算（μ- (Ζα/2σ * se) , μ+ (Ζα/2σ * se) ）
+alpha <- 0.2 # 双侧临界值（置信区间）
+x_bar = mean(reaction_time)
+z_score <- qnorm(1 - alpha / 2)
+
+lower_bound <- x_bar - (z_score * standard_error)
+upper_bound <- x_bar + (z_score * standard_error)
+cat("80% confidence interval is in [", round(lower_bound, 2),
+    ",", round(upper_bound, 2), "]\n")
+
+```
+
+```{r}
+# 2)
+n <- 100 # 假设n为100
+print(which(sapply(3:(n-1), function(x)
+  all(x %% 2:floor(sqrt(x)) != 0))))
+```
+
+```{r}
+# 3a）
+head_coin <- 61
+n <- 100
+p0 <- 0.5 # 原假设
+
+# 现实结果
+p_head <- head_coin / n
+
+# 计算检验统计量（z分数）
+z <- (p_head - p0) / sqrt(p0 * (1 - p0) / n)
+
+# 计算p值（双侧检验）
+p_value <- 2 * (1 - pnorm(abs(z)))
+cat("The p value is", p_value, "\n")
+
+# 在95%显著水平下，若p值小于0.5，则拒绝原假设
+cat("Because p value is smaller than 0.5, so the null hypothesis is wrong")
+```
+
+```{r}
+# 3b i）
+# 取x =[-3, -2, -1, 1, 2, 3], 
+# y = [1,−2,1,−1,2,−1]，
+
+# x平均值 = y平均值 = 0
+# 经计算，可得协方差为0
+```
+
+```{r}
+# 4）
+library(stringr)
+s <- "Bookname: A happy teacher, author: Peter Chan, borowwer: UID12345"
+print(str_extract(s, "Bookname:\\s*[A-Z][a-z|\\s*]+"))
+print(str_extract(s, "^(?=[^ABC][^DEF])Bookname:\\s*[A-Z][a-z|\\s*]+"))
+
+tab <- str_match(s, "(borowwer):\\s*UID(\\d{5})")
+print(tab[[2]])
+print(str_extract(s, "(?<=P)[a-zA-Z]+"))
+
+ss <- c("5'2", "8'34", "5' 25", "5, 8", "6, ")
+print(sum(str_detect(ss, "^[4-7]'\\d{1,2}$")))
+```
+
+```{r}
+# 4b）
+mail1 <- "angus12.junior@gmail.com"
+mail2 <- "my.friend-386.email@my-school.org"
+mail3 <- "peterchan.hku.hk"
+pattern <- "^[a-zA-Z0-9]+([.-][a-zA-Z0-9]+)*@[a-zA-Z0-9-]+\\.[a-z]+"
+res <- str_detect(c(mail1, mail2, mail3), pattern)
+res
+```
+
+```{r}
+# 5）
+library(lattice)
+library(ggplot2)
+library(caret)
+# a)
+data_point <- c("x1", "x2", "x3", "x4", "x5", "x6", "x7", "x8", "x9",
+                "x10", "x11", "x12", "x13", "x14", "x15", "x16", "x17",
+                "x18", "x19", "x20")
+y <- c("Y", "N", "Y", "Y", "N", "Y", "Y", "Y", "N", "Y", "Y", "N",
+           "Y", "Y", "N", "Y", "Y", "Y", "N", "Y")
+y_hat <- c("Y", "Y", "N", "Y", "Y", "N", "N", "Y", "Y", "N", "N", "N",
+             "Y", "Y", "N", "N", "N", "Y", "Y", "N")
+
+datas <- data.frame(data_point, trues, predict)
+datas
+datas$y <- factor(datas$trues, levels = c("Y", "N"))
+datas$y_hat <- factor(datas$predict, levels = c("Y", "N"))
+
+cm <- confusionMatrix(data = datas$y_hat, reference = datas$y)
+print(cm)
+```
+
+```{r}
+# 5b）
+print(cm$byClass)
+
+# 5c）
+# Ans: Yes, we can do it by letting the model to predict negative everytime. is this case, FP (false positive) = 0 and the specificity = 1, but the sensitivity will be 0 in this case
+
+# 5d）
+# Ans: Yes, we can do it by letting the model to predict positive evertime, in the case, FN (false negative) = 0 and the sensitivity = 1, but the specificity = 0 in this case
+
+# 5e）
+# When the sensitivity = 1, FN = 0, specificity = 1, FP = 0, in this case, every prediction is accurate and correct, TP% = TN% = 1, so the accuracy is 100%
+```
+
+```{r}
+# 6a, b）
+library(dslabs)
+library(dplyr)
+library(ggplot2)
+data("gapminder")
+head(gapminder)
+
+datass <- gapminder |>
+  filter(year == 1962)
+ggplot(datass, aes(x = fertility, y = life_expectancy,
+                   colour = continent))+
+  geom_point()
+```
+
+```{r}
+# 6c）
+plot_data <- gapminder |>
+  filter(year %in% c(1962, 2012)) |>
+  mutate(year = factor(year))
+  
+ggplot(plot_data, aes(x = fertility, y = life_expectancy, colour = continent)) +
+  geom_point() +
+  facet_grid(. ~year) +
+  labs(x = "Fertility", 
+       y = "Life Expectancy",
+       color = "Continent") +
+  theme_minimal() 
+```
+```{r}
+# 6d）
+us_data <- gapminder |>
+  filter(country == "United States")
+ggplot(us_data, aes(x = year, y = fertility)) +
+  geom_point()
+```
+```{r}
+# Part B
+# 1a）
+marksdf <- read_excel("marks.xls")
+
+# 1b）
+marks_clean <- marksdf |>
+  seperate(Marks, into = c("Exam_Type", "Score"), sep = "_") |>
+  mutate(Exam_Type = to_lower(Exam_Type))
+result <- marks_clean |> 
+  pivot_wider(names_from = Exam_Type, values_from = Score)
+
+# 1c）
+check_uid <- function(df) {
+  df |>
+    filter(!str_detect(UID, pattern = "^U\\d{6}$")) |>
+    select(UID) |>
+    distinct()
+}  
+
+check_subclass <- function(df) {
+  df |>
+    filter(!(Subclass %in% c("A", "B", "C", "D"))) |>
+    select(Subclass) |>
+    distinct()
+}
+
+invalid_uid <- check_uid(result)
+invalid_subclass <- check_subclass(result)
+invalid_subclass
+invalid_uid
+
+# 1d）
+result <- result |>
+  mutate(UID = ifelse(
+    str_detect("^[A-TV-Z]\\d{6}"),
+    str_replace("^.", "U")
+  ))
+
+# 1e）
+result <-result |>
+  mutate(`Weighted Mark` = 0.15 * A1 + 0.15 * A2 + 0.2 * mid_term + 0.5 * final)
+```
+
+```{r}
+
+
+
+
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
