@@ -226,20 +226,3 @@ result <- result |>
 result <-result |>
   mutate(`Weighted Mark` = 0.15 * A1 + 0.15 * A2 + 0.2 * mid_term + 0.5 * final)
 ```
-
-```{r}
-
-
-
-
-```
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
